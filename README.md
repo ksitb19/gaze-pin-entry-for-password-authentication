@@ -1,4 +1,4 @@
-# gaze-pin-entry-for-password-authentication
+# Gaze-pin-entry-for-password-authentication
 Installation steps
 Download python 3.5.0 from python.org
 Based on the configuration select the link "Windows x86-64 executable installer"
