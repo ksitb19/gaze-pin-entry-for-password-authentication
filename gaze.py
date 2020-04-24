@@ -2,44 +2,17 @@ import cv2
 import numpy as np
 import dlib
 from math import hypot
-##import pyglet
 import time
-##import serial
-account_sid = "AC1bcbed3e023388310f16eb6dd2277fa3"
-auth_token = "87fad79150df01eof811fd2c131c978a"
-
-
-
 import random
-# Load sounds
-##sound = pyglet.media.load("sound.mp3", streaming=False)
-##left_sound = pyglet.media.load("left.mp3", streaming=False)
-##right_sound = pyglet.media.load("right.mp3", streaming=False)
-
-##data = serial.Serial(
-##                 'COM5',
-##                   baudrate = 9600,
-##                    parity=serial.PARITY_NONE,
-##                   stopbits=serial.STOPBITS_ONE,
-##                   bytesize=serial.EIGHTBITS,
-####                    )
-##                    timeout=1 # must use when using data.readline()
-##                    )
-
-
-
-
-
 
 cap = cv2.VideoCapture(0) #to capture video
-board = np.zeros((300, 700), np.uint8) #lower and upper bound of keyboard to shape the dataset and 
+board = np.zeros((300, 700), np.uint8)  
 board[:] = 255
 
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-# Keyboard settings
-##keyboard = np.zeros((600, 1000, 3), np.uint8)
+
 keyboard = np.zeros((1000, 800, 3), np.uint8)
 
 
@@ -47,15 +20,6 @@ keys_set_1 = {0: "1", 1: "2", 2: "3",
               3: "E",4: "4", 5: "5",
               6: "6", 7: "C",8: "7",
               9: "8", 10: "9",11:"0",12:"2"}
-
-
-##keys_set_1 = {0: "1", 1: "2", 2: "3", 3: "cl",
-##              4: "4",5: "5", 6: "6", 7: "cr",
-##              8: "7", 9: "8",10: "9", 11: "er",
-##              12: " ", 13: "0", 14: " ",15:" "}
-#keys_set_2 = {0: "1", 1: "2", 2: "3", 3: "4", 4: "5",
-              #5: "6", 6: "7", 7: "8", 8: "9", 9: "0",
-              #10: "enter", 11: "cancel", 12: "exit", 13: "M", 14: "<"}
 
 def draw_letters(letter_index, text, letter_light):
     # Keys
@@ -98,12 +62,7 @@ def draw_letters(letter_index, text, letter_light):
     elif letter_index == 12:
        x = 0
        y = 600
-##    elif letter_index == 13:
-##        x = 600
-##        y = 400
-##    elif letter_index == 14:
-##        x = 800
-##        y = 400
+
 
     width = 200
     height = 200
@@ -127,12 +86,7 @@ def draw_letters(letter_index, text, letter_light):
 
 def draw_menu():
     rows, cols, _ = keyboard.shape
-    th_lines = 4 # thickness lines
-##    cv2.line(keyboard, (int(cols/2) - int(th_lines/2), 0),(int(cols/2) - int(th_lines/2), rows),
-##             (51, 51, 51), th_lines)
-    ## cv2.putText(keyboard, "PASSword", (80, 300), font, 6, (255, 255, 255), 5)
-##    cv2.putText(keyboard, "RIGHT", (80 + int(cols/2), 300), font, 6, (255, 255, 255), 5)
-
+    th_lines = 4 
 def midpoint(p1 ,p2):
     return int((p1.x + p2.x)/2), int((p1.y + p2.y)/2)
 
@@ -144,8 +98,7 @@ def get_blinking_ratio(eye_points, facial_landmarks):
     center_top = midpoint(facial_landmarks.part(eye_points[1]), facial_landmarks.part(eye_points[2]))
     center_bottom = midpoint(facial_landmarks.part(eye_points[5]), facial_landmarks.part(eye_points[4]))
 
-##    hor_line = cv2.line(frame, left_point, right_point, (0, 255, 0), 2)
-##    ver_line = cv2.line(frame, center_top, center_bottom, (0, 255, 0), 2)
+
 
     hor_line_lenght = hypot((left_point[0] - right_point[0]), (left_point[1] - right_point[1]))
     ver_line_lenght = hypot((center_top[0] - center_bottom[0]), (center_top[1] - center_bottom[1]))
@@ -175,8 +128,7 @@ def get_gaze_ratio(eye_points, facial_landmarks):
                                 (facial_landmarks.part(eye_points[3]).x, facial_landmarks.part(eye_points[3]).y),
                                 (facial_landmarks.part(eye_points[4]).x, facial_landmarks.part(eye_points[4]).y),
                                 (facial_landmarks.part(eye_points[5]).x, facial_landmarks.part(eye_points[5]).y)], np.int32)
-    # cv2.polylines(frame, [left_eye_region], True, (0, 0, 255), 2)
-
+    
     height, width, _ = frame.shape
     mask = np.zeros((height, width), np.uint8)
     cv2.polylines(mask, [left_eye_region], True, 255, 2)
@@ -231,55 +183,46 @@ pf =['1','2']
 while True:
 
 
-  while True :
-
-     
-  
-    #time.sleep(1);  
-##    print('Scanned the ID Identified in the database ')
-
-    
-    
+  while True :    
     _, frame = cap.read()
-    #frame = cv2.resize(frame, None, fx=0.8, fy=0.8)
+    
     rows, cols, _ = frame.shape
-##    keyboard[:] = (26, 26, 26)
+
     keyboard[:] = (26, 26, 26)
     frames += 1
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Draw a white space for loading bar
+   
     frame[rows - 50: rows, 0: cols] = (255, 255, 255)
 
     if select_keyboard_menu is True:
         draw_menu()
 
-    # Keyboard selected
+    
     if keyboard_selected == "left":
         keys_set = keys_set_1
-##    else:
-##        keys_set = keys_set_2
+
     active_letter = keys_set[letter_index]
 
-    # Face detection
+    
     faces = detector(gray)
     for face in faces:
         landmarks = predictor(gray, face)
 
         left_eye, right_eye = eyes_contour_points(landmarks)
 
-        # Detect blinking
+       
         left_eye_ratio = get_blinking_ratio([36, 37, 38, 39, 40, 41], landmarks)
         right_eye_ratio = get_blinking_ratio([42, 43, 44, 45, 46, 47], landmarks)
         blinking_ratio = (left_eye_ratio + right_eye_ratio) / 2
 
-        # Eyes color
+       
         cv2.polylines(frame, [left_eye], True, (0, 0, 255), 2)
         cv2.polylines(frame, [right_eye], True, (0, 0, 255), 2)
 
 
         if select_keyboard_menu is True:
-            # Detecting gaze to select Left or Right keybaord
+           
             gaze_ratio_left_eye = get_gaze_ratio([36, 37, 38, 39, 40, 41], landmarks)
             gaze_ratio_right_eye = get_gaze_ratio([42, 43, 44, 45, 46, 47], landmarks)
             gaze_ratio = (gaze_ratio_right_eye + gaze_ratio_left_eye) / 2
@@ -288,33 +231,21 @@ while True:
             if gaze_ratio <= 5:
                 keyboard_selected = "right"
                 keyboard_selection_frames += 1
-                # If Kept gaze on one side more than 15 frames, move to keyboard
+               
                 if keyboard_selection_frames == 15:
                     select_keyboard_menu = False
-##                    right_sound.play()
-                    # Set frames count to 0 when keyboard selected
+
                     frames = 0
                     keyboard_selection_frames = 0
                 if keyboard_selected != last_keyboard_selected:
                     last_keyboard_selected = keyboard_selected
                     keyboard_selection_frames = 0
-##            else:
-##                keyboard_selected = "left"
-##                keyboard_selection_frames += 1
-##                # If Kept gaze on one side more than 15 frames, move to keyboard
-##                if keyboard_selection_frames == 15:
-##                    select_keyboard_menu = False
-####                    left_sound.play()
-##                    # Set frames count to 0 when keyboard selected
-##                    frames = 0
-##                if keyboard_selected != last_keyboard_selected:
-##                    last_keyboard_selected = keyboard_selected
-##                    keyboard_selection_frames = 0
+
 
         else:
             # Detect the blinking to select the key that is lighting up
             if blinking_ratio > 5:
-                # cv2.putText(frame, "BLINKING", (50, 150), font, 4, (255, 0, 0), thickness=3)
+               
                 blinking_frames += 1
                 frames -= 1
 
@@ -331,13 +262,11 @@ while True:
                         print('text1 {}'.format(text1))
                     if active_letter == "E" or active_letter == "C" :
                         text += " "
-##                        del text1[-1]
-##                        count=count-1
-##                        text1.pop(count)
+
                         count=count-1
                         text1.pop(count)
                         print('del {}'.format(text1))
-##                    print(active_letter)
+
                     text += " "
                     print(text)
                     if len(text1) ==2 :
@@ -390,14 +319,10 @@ while True:
 
     cv2.imshow("Frame", frame)
     cv2.imshow("Virtual keyboard", keyboard)
-##    cv2.imshow("Board", board)
 
     if cv2.waitKey(20) & 0xFF == ord('q'):
         break
 
-##    key = cv2.waitKey(1)
-##    if key == 27:
-##        break
 
 cap.release()
 cv2.destroyAllWindows()
