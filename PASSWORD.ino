@@ -1,5 +1,3 @@
-
-
 int R1=8;
 int BUZZER=9;
 
